@@ -48,5 +48,15 @@ def clean_text(text):
     text = re.sub(r"aren't", "are not", text)
     text = re.sub(r"isn't", "is not", text)
     text = re.sub(r"con't", " cannot", text)
-    text = re.sub(r"""[-()+"=\!*/?;,.:']{}#$%^~_|""", "", text)
+    text = re.sub(r"""[-()+"=\!*/?;,.:]{}#$%^~_|""", "", text)
     return text
+
+# Cleaning the questions
+clean_questions = []
+for question in questions:
+    clean_questions.append(clean_text(question))
+    
+# Cleaning the answers
+clean_answers = []
+for answer in answers:
+    clean_answers.append(clean_text(answer))
