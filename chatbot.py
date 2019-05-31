@@ -60,3 +60,19 @@ for question in questions:
 clean_answers = []
 for answer in answers:
     clean_answers.append(clean_text(answer))
+    
+# Creating a dictionary that maps each word to its number of occurences
+word_to_count = {}
+for question in clean_questions:
+    for word in question.split() :
+        if word not in word_to_count:
+            word_to_count[word] = 1
+        else:
+            word_to_count[word] += 1
+
+for answer in clean_answers:
+    for word in answer.split() :
+        if word not in word_to_count:
+            word_to_count[word] = 1
+        else:
+            word_to_count[word] += 1
