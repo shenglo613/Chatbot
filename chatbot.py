@@ -129,3 +129,13 @@ for answer in clean_answers:
         else:
             ints.append(answerwords_to_int[word])
     answer_to_ints.append(ints)
+    
+# Sorting questions and answers by the length of questions
+sorted_clean_questions = []
+sorted_clean_answers = []
+for length in range (1, 26):
+    for i in enumerate(question_to_ints):
+        if len(i[1]) == length:
+            sorted_clean_questions.append(question_to_ints[i[0]])
+            sorted_clean_answers.append(answers_to_ints[i[0]])
+            
