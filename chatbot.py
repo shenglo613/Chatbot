@@ -137,5 +137,5 @@ for length in range (1, 26):
     for i in enumerate(question_to_ints):
         if len(i[1]) == length:
             sorted_clean_questions.append(question_to_ints[i[0]])
-            sorted_clean_answers.append(answers_to_ints[i[0]])
+            sorted_clean_answers.append(answer_to_ints[i[0]])
             
