@@ -94,9 +94,38 @@ for word, count in word_to_count.items():
         word_num += 1
 
 # Adding the last tokens to these two dictionaries
-tokens = ['<PAD>', '<EOS>', '<OUT>', '<SOS>']
+tokens = ['<PAD>', '<EOS>', '<OUT>', '<SOS>'] 
 for token in tokens:
     questionwords_to_int[token] = len(questionwords_to_int) + 1
     
 for token in tokens:
     answerwords_to_int[token] = len(answerwords_to_int) + 1
+    
+# Creating the inverse dictionary of the answerword_to_int dictionary
+answerint_to_word = {w_i: w for w, w_i in answerwords_to_int.items()}
+
+# Adding the End of String token to the end of every answer
+for i in range(len(clean_answers)):
+    clean_answers[i] += ' <EOS>'
+    
+# Translating all the questoins and answer into integers
+# and replacing all the words that were filtered out by <OUT>
+question_to_ints = []
+for question in clean_questions:
+    ints = []
+    for word in question.split():
+        if word not in questionwords_to_int:
+            ints.append(questionwords_to_int['<OUT>'])
+        else:
+            ints.append(questionwords_to_int[word])
+    question_to_ints.append(ints)
+    
+answer_to_ints = []
+for answer in clean_answers:
+    ints = []
+    for word in answer.split():
+        if word not in answerwords_to_int:
+            ints.append(answerwords_to_int['<OUT>'])
+        else:
+            ints.append(answerwords_to_int[word])
+    answer_to_ints.append(ints)
