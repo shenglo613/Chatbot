@@ -20,3 +20,11 @@ conversations_ids = []
 for conversation in conversations:
     _conversation = conversation.split(' +++$+++ ')[-1][1:-1].replace("'", "").replace(" ", "")
     conversations_ids.append(_conversation.split(','))
+    
+# Getting seperately the questions and the answers
+questions = []
+answers = []
+for conversation in conversations_ids:
+    for i in range(len(conversation) - 1):
+        questions.append(id_to_line[conversation[i]])
+        answers.append(id_to_line[conversation[i+1]])
