@@ -48,7 +48,7 @@ def clean_text(text):
     text = re.sub(r"aren't", "are not", text)
     text = re.sub(r"isn't", "is not", text)
     text = re.sub(r"con't", " cannot", text)
-    text = re.sub(r"""[-()+"=\!*/?;,.:]{}#$%^~_|""", "", text)
+    text = re.sub(r"""[-()+"=\&'@`{}#$%^~_|!*/?;,.:]""", "", text)
     return text
 
 # Cleaning the questions
@@ -76,3 +76,19 @@ for answer in clean_answers:
             word_to_count[word] = 1
         else:
             word_to_count[word] += 1
+            
+# Creating two dictionaries that map the question word and the answer word to the unique integer
+threshold = 20
+questionwords_to_int = {}
+word_num = 0
+for word, count in word_to_count.items():
+    if count >= threshold:
+        questionwords_to_int[word] = word_num
+        word_num += 1
+
+answerwords_to_int = {}
+word_num = 0
+for word, count in word_to_count.items():
+    if count >= threshold:
+        answerwords_to_int[word] = word_num
+        word_num += 1
