@@ -92,3 +92,11 @@ for word, count in word_to_count.items():
     if count >= threshold:
         answerwords_to_int[word] = word_num
         word_num += 1
+
+# Adding the last tokens to these two dictionaries
+tokens = ['<PAD>', '<EOS>', '<OUT>', '<SOS>']
+for token in tokens:
+    questionwords_to_int[token] = len(questionwords_to_int) + 1
+    
+for token in tokens:
+    answerwords_to_int[token] = len(answerwords_to_int) + 1
