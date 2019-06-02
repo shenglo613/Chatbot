@@ -155,7 +155,7 @@ def preprocess_targets(targets, word_to_int, batch_size):
     return preprocessed_targets
     
 # Creating the Encoder RNN Layer
-def encoder_rnn_layer(rnn_inputs, rnn_size, num_layers, keep_prob, sequence_length):
+def encoder_rnn(rnn_inputs, rnn_size, num_layers, keep_prob, sequence_length):
     lstm = tf.contrib.rnn.BasicLSTMCell(rnn_size)
     lstm_dropout = tf.contrib.rnn.DropoutWrapper(lstm, input_keep_prob=keep_prob)
     encoder_cell = tf.contrib.rnn.MultiRNNCell([lstm_dropout] * num_layers)
@@ -188,7 +188,7 @@ def decode_training_set(encoder_state, decoder_cell, decoder_embadded_input,
 
 # Decoding the test/validation set
 def decode_test_set(encoder_state, decoder_cell, decoder_embaddings_matrix, sos_id,
-                        eos_id, max_length, num_words, sequence_length, decoding_scope, 
+                        eos_id, max_length, num_words, decoding_scope, 
                         output_function, keep_prob, batch_size):
     attention_states = tf.zeros([batch_size, 1, decoder_cell.output_size])
     attention_keys, attention_values, attention_score_function, attention_construct_function = tf.contrib.seq2seq.prepare_attention(attention_states, attention_option= 'bahdanau', num_units=decoder_cell.output_size)
@@ -209,11 +209,41 @@ def decode_test_set(encoder_state, decoder_cell, decoder_embaddings_matrix, sos_
                                                                                                                 scope=decoding_scope)
     return test_predictions
 
-    
-    
-    
-    
-    
+# Creating the decoder RNN      
+def decoder_rnn(decoder_embadded_input, decoder_embaddings_matrix, encoder_state, num_words, sequence_length, rnn_size, num_layers, word_to_int, keep_prob, batch_size):
+    with tf.variable_scope("decoding") as decoding_scope:
+        lstm = tf.contrib.rnn.BasicLSTMCell(rnn_size)
+        lstm_dropout = tf.contrib.rnn.DropoutWrapper(lstm, input_keep_prob=keep_prob)
+        decoder_cell = tf.contrib.rnn.MultiRNNCell([lstm_dropout] * num_layers)
+        weights =tf.truncated_normal_initializer(stddev=0.1)
+        biases = tf.zeros_initializer()
+        output_function = lambda x: tf.contrib.layers.fully_connected(x,
+                                                                      num_words,
+                                                                      None,
+                                                                      scope=decoding_scope,
+                                                                      weights_initializer=weights,
+                                                                      biases_initializer=biases)
+        training_predictions = decode_training_set(encoder_state,
+                                                   decoder_cell,
+                                                   decoder_embadded_input,
+                                                   sequence_length,
+                                                   decoding_scope,
+                                                   output_function,
+                                                   keep_prob,
+                                                   batch_size)
+        decoding_scope.reuse_variables()
+        test_predictions = decode_test_set(encoder_state, 
+                                           decoder_cell, 
+                                           decoder_embaddings_matrix, 
+                                           word_to_int['<SOS>'],
+                                           word_to_int['<EOS>'], 
+                                           sequence_length-1, 
+                                           num_words,
+                                           decoding_scope, 
+                                           output_function, 
+                                           keep_prob, 
+                                           batch_size)
+    return training_predictions, test_predictions
     
     
     
