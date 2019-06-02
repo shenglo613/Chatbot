@@ -245,6 +245,28 @@ def decoder_rnn(decoder_embadded_input, decoder_embaddings_matrix, encoder_state
                                            batch_size)
     return training_predictions, test_predictions
     
+# Building a seq2seq model
+def seq2seq_model(inputs, targets, keep_prob, batch_size, sequence_length, answer_num_words, question_num_words, encoder_embadding_size, decoder_embadding_size, rnn_size, num_layers, questionwords_to_int):
+    encoder_embadded_input = tf.contrib.layers.embed_sequence(inputs,
+                                                              answer_num_words+1,
+                                                              encoder_embadding_size,
+                                                              initializer=tf.random_uniform_initializer(0, 1))
+    encoder_state = encoder_rnn(encoder_embadded_input, rnn_size, num_layers, keep_prob, sequence_length)
+    preprocessed_targets = preprocess_targets(targets, questionwords_to_int, batch_size)
+    decoder_embaddings_matrix = tf.Variable(tf.random_uniform([question_num_words+1, decoder_embadding_size], 0, 1))
+    decoder_embadded_input = tf.nn.embedding_lookup(decoder_embaddings_matrix, preprocessed_targets)
+    training_predictions, test_predictions = decoder_rnn(decoder_embadded_input, 
+                                                         decoder_embaddings_matrix, 
+                                                         encoder_state,
+                                                         question_num_words,
+                                                         sequence_length,
+                                                         rnn_size,
+                                                         num_layers,
+                                                         questionwords_to_int,
+                                                         keep_prob, 
+                                                         batch_size)
+    return training_predictions, test_predictions
+    
     
     
     
